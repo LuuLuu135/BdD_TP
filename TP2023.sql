@@ -100,8 +100,8 @@ CREATE TABLE PARTIDA_SESION(
 PRIMARY KEY(ID_Partida, ID_Sesion),
 ID_Partida int,
 ID_Sesion int NOT NULL,
-ID_Heroe int,
-EQUIPO_NRO int
+ID_Heroe int
+--EQUIPO_NRO int
 
 FOREIGN KEY (ID_Partida) REFERENCES PARTIDA(ID_Partida),
 FOREIGN KEY (ID_Sesion) REFERENCES SESION(ID_Sesion),
@@ -118,6 +118,5 @@ ID_Partida int NOT NULL,
 EQUIPO_NRO int
 
 FOREIGN KEY (ID_Partida) REFERENCES PARTIDA(ID_Partida),
-FOREIGN KEY (EQUIPO_NRO) REFERENCES PARTIDA_SESION(EQUIPO_NRO) --There are no primary or candidate keys in the referenced table 'PARTIDA_SESION' that match the referencing column list in the foreign key 'FK__GANADORES__EQUIP__7B5B524B'.
 
 );
