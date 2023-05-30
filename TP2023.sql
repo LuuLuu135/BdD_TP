@@ -47,17 +47,18 @@ FOREIGN KEY (ID_Modalidad) REFERENCES MODALIDAD(ID_Modalidad)
 CREATE TABLE SESION(
 
 ID_Sesion int IDENTITY PRIMARY KEY NOT NULL,
-Fecha_in varchar(10),
-Hora_in varchar(10),
-Fecha_eg Varchar(10),
-Hora_eg varchar(10),
+Fecha_in date,
+Hora_in time,
+Fecha_eg date,
+Hora_eg time,
 Nickname varchar(30)
 
 FOREIGN KEY (Nickname) REFERENCES JUGADOR(Nickname)
 
 );
 
---INSERT INTO SESION VALUES( );
+
+--INSERT INTO SESION VALUES(29/05/2023, );
 
 CREATE TABLE ROL(
 
@@ -120,3 +121,27 @@ EQUIPO_NRO int
 FOREIGN KEY (ID_Partida) REFERENCES PARTIDA(ID_Partida),
 
 );
+
+
+--CONSULTAS SQL
+--¿Cual fue el jugador que inicio sesion mas veces en un mismo dia?
+
+SELECT Fecha_in,nickname, count(*) AS cantidad_inicios
+FROM SESION
+GROUP BY Fecha_in, Nickname
+ORDER BY cantidad_inicios DESC
+LIMIT 1;
+
+
+--¿Cual es el horario en que se conectan mas jugadores?
+
+SELECT DATEPART(HOUR, Hora_in) AS HORA, count(*) AS Cantidad_Conexiones
+FROM SESION
+GROUP BY DATEPART(HOUR, Hora_in)
+ORDER BY Cantidad_Conexiones DESC
+LIMIT 1;
+
+
+--¿Que tipo de partida es la mas jugada y que tipo de mapa es el mas elegido?
+
+SELECT TOP 1 
