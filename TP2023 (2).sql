@@ -96,10 +96,13 @@ FOREIGN KEY (ID_Modalidad) REFERENCES MODALIDAD(ID_Modalidad)
 
 );
 
-INSERT INTO PARTIDA VALUES(827415, '07:21:00', '00:37:48',1,2),
-						(532976, '09:46:00', '00:41:19',2,3),
-						(694820, '11:50:00', '00:24:42',3,1),
-						(158743, '02:45:00' ,'00:16:33',2,1);
+INSERT INTO PARTIDA VALUES
+
+(827415, '07:21:00', '00:37:48',1,2),
+(532976, '09:46:00', '00:41:19',2,3),
+(694820, '11:50:00', '00:24:42',3,1),
+(158743, '02:45:00' ,'00:16:33',2,1),
+(837492, '15:56:00','00:41:22',2,1);
  
 --Select * FROM PARTIDA;
 
@@ -823,6 +826,7 @@ FOREIGN KEY (ID_Heroe) REFERENCES HEROE(ID_Heroe)
 
 INSERT INTO PARTIDA_SESION (ID_Partida, ID_Sesion, ID_Heroe, ganadores)
 VALUES
+
 -- Partida 1
 (827415, 18, 45, 1),
 (827415, 7, 88, 1),
@@ -866,23 +870,20 @@ VALUES
 (158743, 4, 38, 0),
 (158743, 1, 64, 0),
 (158743, 2, 81, 0),
-(158743, 5, 107, 0);
+(158743, 5, 107, 0),
+--partida 5
+(837492, 18, 12, 1),
+(837492, 17, 13, 1),
+(837492, 26, 16, 1),
+(837492, 25, 28, 1),
+(837492, 22, 50, 1),
+(837492, 21, 53, 0),
+(837492, 13, 84, 0),
+(837492, 12, 89, 0),
+(837492, 23, 110, 0),
+(837492, 6, 101, 0);
 
 
-
-
-
-/*
-CREATE TABLE GANADORES(
-
-PRIMARY KEY (ID_Partida, EQUIPO_NRO),
-ID_Partida int NOT NULL,
-EQUIPO_NRO int
-
-FOREIGN KEY (ID_Partida) REFERENCES PARTIDA(ID_Partida),
-
-);
-*/
 
 
 
@@ -916,7 +917,6 @@ FOREIGN KEY (ID_Partida) REFERENCES PARTIDA(ID_Partida),
 SELECT TOP 1 Nickname, COUNT(*) AS Cantidad
 FROM SESION
 GROUP BY Nickname, Fecha_in
-HAVING COUNT(*) > 1
 ORDER BY COUNT(*) DESC;
 
 
@@ -997,18 +997,18 @@ ORDER BY COUNT(*) DESC;
 
 
 SELECT
-    p.ID_Partida,
-    p.Duracion,
-    j.Nickname
+    PARTIDA.ID_Partida,
+    PARTIDA.Duracion,
+    JUGADOR.Nickname
 FROM
-    PARTIDA p
-    INNER JOIN PARTIDA_SESION ps ON p.ID_Partida = ps.ID_Partida
-    INNER JOIN SESION s ON ps.ID_Sesion = s.ID_Sesion
-    INNER JOIN JUGADOR j ON s.Nickname = j.Nickname
+    PARTIDA
+    INNER JOIN PARTIDA_SESION ON PARTIDA.ID_Partida = PARTIDA_SESION.ID_Partida
+    INNER JOIN SESION ON PARTIDA_SESION.ID_Sesion = SESION.ID_Sesion
+    INNER JOIN JUGADOR ON SESION.Nickname = JUGADOR.Nickname
 WHERE
-    p.Duracion = (SELECT MAX(Duracion) FROM PARTIDA)
+    PARTIDA.Duracion = (SELECT MAX(Duracion) FROM PARTIDA)
 ORDER BY
-    p.ID_Partida;
+    PARTIDA.ID_Partida;
 
 
 -- Partida más corta:
@@ -1069,19 +1069,20 @@ ORDER BY Cantidad DESC;
 -- Daño de cada Héroe:
 
 
-SELECT H.Nombre_Heroe, SUM(HB.Daño) AS Daño_Total
-FROM HEROE H
-JOIN HABILIDADES HB ON H.ID_Heroe = HB.ID_Heroe
-GROUP BY H.Nombre_Heroe
+SELECT HEROE.Nombre_Heroe, SUM(HABILIDADES.Daño) AS Daño_Total
+FROM HEROE
+JOIN HABILIDADES ON HEROE.ID_Heroe = HABILIDADES.ID_Heroe
+GROUP BY HEROE.Nombre_Heroe
 ORDER BY Daño_Total DESC;
 
 
 -- Héroe con 4ta habilidad más poderosa:
 
 
-SELECT TOP 1 H.Nombre_Heroe, HB.Daño AS Daño_Habilidad_4
-FROM HEROE H
-JOIN HABILIDADES HB ON H.ID_Heroe = HB.ID_Heroe
-WHERE HB.NRO_Habilidad = 4
-ORDER BY HB.Daño DESC;
+SELECT HEROE.Nombre_Heroe, HABILIDADES.Daño
+FROM HEROE
+JOIN HABILIDADES ON HEROE.ID_Heroe = HABILIDADES.ID_Heroe
+WHERE HABILIDADES.Daño = ( SELECT MAX(HABILIDADES.Daño)
+		FROM HABILIDADES
+		WHERE HABILIDADES.NRO_Habilidad = 4) AND HABILIDADES.NRO_Habilidad = 4;
 
